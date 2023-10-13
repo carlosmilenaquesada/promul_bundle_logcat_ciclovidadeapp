@@ -2,14 +2,12 @@ package com.example.promul_bundle_logcat_ciclovidadeapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textoTextViewVolatil = (TextView) findViewById(R.id.textoTextViewVolatil);
-        textoEditTextNoVolatil = (EditText) findViewById(R.id.textoEditTextNoVolatil);
+        textoTextViewVolatil = findViewById(R.id.textoTextViewVolatil);
+        textoEditTextNoVolatil = findViewById(R.id.textoEditTextNoVolatil);
 
-        Button botonModificar = (Button) findViewById(R.id.botonModificar);
+        Button botonModificar = findViewById(R.id.botonModificar);
         botonModificar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,8 +65,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             for (String key : savedInstanceState.keySet()) {
                 Log.d("Contenido bundle", "Key -> " + key + "; Value -> " + savedInstanceState.get(key).toString());
-                textoTextViewVolatil.setText(savedInstanceState.get("textoTextViewVolatil").toString());
-                contador = (int) savedInstanceState.get("contador");
+
                 /*El contenido de textoTextViewVolatil se pierde, ya que es un textView. Otros tipos de view como pueden ser un EditText
                  * no pierden su contenido y se asigna automáticamente. Por ejemplo, si tenemos un EditText  que en el momento antes
                  * de voltear la pantalla tiene "7", al voltearla volverá a mostrar "7"*/
@@ -86,13 +83,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*El método onSaveInstanceState se ejecuta justo antes de eliminar el activity activo y crea un bundle (outState) que guarda los estados del actíty antes de eliminarse,
-    * y pasa como parámetro ese bundle (que será el savedInstanceState) en el método onCreate que se ejecuta en la creación del siguiente activity.
-    * Este bundle guarda información de la aplicación y algunos valores como los EditText, que como hemos visto antes, se
-    * restaurarán automáticamente.
-    * Esta sería la funcionalidad básica del método onSaveInstanceState, pero nosotros queremos que
-    * además nos guarde algunas variables y valores que no se guardarán de forma automática, así que
-    * tenemos que añadir al bundle outState dichos valores, sobreescribiendo el método de la siguiente manera:
-    * */
+     * y pasa como parámetro ese bundle (que será el savedInstanceState) en el método onCreate que se ejecuta en la creación del siguiente activity.
+     * Este bundle guarda información de la aplicación y algunos valores como los EditText, que como hemos visto antes, se
+     * restaurarán automáticamente.
+     * Esta sería la funcionalidad básica del método onSaveInstanceState, pero nosotros queremos que
+     * además nos guarde algunas variables y valores que no se guardarán de forma automática, así que
+     * tenemos que añadir al bundle outState dichos valores, sobreescribiendo el método de la siguiente manera:
+     * */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         //Ahora, generamos el bundle (outState) que guardará los valores por defecto
@@ -119,4 +116,96 @@ public class MainActivity extends AppCompatActivity {
          * */
 
     }
+
+
+    /*QUÉ ES LOGCAT
+     * - Logcat es un sistema de para sacar por consola información del programa.
+     * - Es como la consola de depuración o el System.out.print de java.
+     * - Logcat nos permite crear etiquetas para identificar los distintos log que vamos a sacar.
+     * - Para declarar un logcat, se hace de la siguiente manera:
+     *       Log.d("prueba", dato);
+     *       //Esto nos saca el valor de dato por la consola de la pestaña Logcat, bajo la etiqueta prueba,
+     *       //podemos entonces, filtar por etiquetas mediante 'tag:prueba' para que solo nos muestre
+     *       //los datos que estén bajo la etiqueta prueba. Podemos trabajar con varias etiquetas a la vez
+     *       //y mostrar solo la que nos interese, para así controlar mejor los estado de un dato.
+     *       Log.d("principio", dato1);
+     *       Log.d("principio", dato2);
+     *       Log.d("medio", dato1);
+     *       Log.d("medio", dato2);
+     *       Log.d("final", dato1);
+     *       Log.d("final", dato3);
+     *       //Por último, el dato a mostrar forzosamente debe ser un String, así que si es un número
+     *       //o algún tipo primitivo, debemos castearlo para poder mostrarlo.
+     *
+     * */
+
+    /**
+     * CICLO DE VIDA DE UNA APP
+     * - Las aplicaciones móviles pasan por determinados ciclos de vida (se crean, se pausa, se destruyen, se reinician),
+     * estos ciclos de vida es lo que se denomina estados.
+     * <p>
+     * -Cuando se inicia un estado se realizan unas funcionalidades o acciones por defecto, pero a menudo es necesario
+     * programar que estos inicios de estado para que realicen unas acciones diferentes o agregen algunas acciones adicionales.
+     * <p>
+     * - Para realizar estas acciones extraordinarias, debemos atarcar a los métodos que llaman a los cambios de estado, sobrecargado.
+     * Estos métodos se ejecutan en cada cambio de estado, y si estásn sobreescritos, pues realizarán la accion que les hayamos programado.
+     * <p>
+     * - Un ejemplo, es el método onSaveInstanceState que hemos visto anteriormente, que se ejecuta cuando se cierra un activity para
+     * guardar el bundle de su información, el cual hemos sobrecargado para que además de la información básica por defecto, también nos guarde
+     * algunas variables que tenemos en el programa.
+     * <p>
+     * <p>
+     * ESTADOS DE UNA APP
+     * -los estados de una app y los métodos que se ejecutan cuando se inicia cada estado (los cuales vamos a sobrecargar si lo necesitamos) son los siguientes:
+     * onCreate(), onRestore(), onStart(), onPause(), onDestroy(), onSaveInstanceState(@NonNull Bundle outState), etc
+     * hay muchos, pero estos son los más destacados.
+     */
+
+    /*Ejemplo de sobrecarga de métodos de estado de APP.
+     * La sobrecarga que voy a llevar a cabo no es más que mostrar por Log que se está iniciando el estado,
+     * es solo un ejemplo de lo que se puede hacer, podríamos por ejemplo, en onDestroy() realizar una
+     * acción de mandar a una base de datos cierta información, etc*/
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //Escribir aquí el código que queremos que se ejecute cuando la app pase a estado onStart()
+        Log.i("estados", "el activity está onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Escribir aquí el código que queremos que se ejecute cuando la app pase a estado onResume()
+        Log.i("estados", "el activity está onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //Escribir aquí el código que queremos que se ejecute cuando la app pase a estado onPause()
+        Log.i("estados", "el activity está onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //Escribir aquí el código que queremos que se ejecute cuando la app pase a estado onStop()
+        Log.i("estados", "el activity está onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Escribir aquí el código que queremos que se ejecute cuando la app pase a estado onDestroy()
+        Log.i("estados", "el activity está onDestroy");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //Escribir aquí el código que queremos que se ejecute cuando la app pase a estado onRestart()
+        Log.i("estados", "el activity está onRestart");
+    }
+
+
 }
