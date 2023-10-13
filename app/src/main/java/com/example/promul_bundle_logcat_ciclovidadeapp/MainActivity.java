@@ -1,10 +1,14 @@
 package com.example.promul_bundle_logcat_ciclovidadeapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,41 +29,60 @@ public class MainActivity extends AppCompatActivity {
      * - No solo existe el Bundle implícito de onCreate, si no que podemos crear Bundles según la necesidad
      * del programa para transferir valores entre activitys.
      */
+    int contador = 0;
 
+    /*En este ejemplo de Bundle, vamos a ver como se comportan dos tipos de view, uno es un
+    * TextView cuyo contenido se pierde al cambiar de Activity, y el otro es un EditText cuyo
+    * contenido se conserva y restaura automáticamente a través de savedInstanceState al cambiar de Activity*/
+    TextView textoTextViewVolatil = null;
+    EditText textoEditTextNoVolatil = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText textoSalvable = (EditText) findViewById(R.id.textoSalvable);
+        textoTextViewVolatil = (TextView) findViewById(R.id.textoTextViewVolatil);
+        textoEditTextNoVolatil = (EditText) findViewById(R.id.textoEditTextNoVolatil);
+
+        Button botonModificar = (Button) findViewById(R.id.botonModificar);
+        botonModificar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Vamos a tratar que ambos textos tanto el TextView como el EditText se actualicen,
+                * para posteriormente ver el comportamiento al voltear la pantalla*/
+                textoTextViewVolatil.setText("" + contador);
+                textoEditTextNoVolatil.setText("" + contador);
+                contador++;
+            }
+        });
+
         /* Ejemplo de Bundle implícito de onCreate
-        * - Cuando rotamos la posición del dispositivo de vertical a horizontal y viceversa, savedInstanceState guarda
-        * el bundle con los valores del último activity. Algunos de estos valores por defect son
-        *  viewHierarchyState, lifecycle, lastAutofillId, etc. Pero además de éstos, también guarda los valores
-        * que se están usando como variables en el programa, como puede ser el contenido de la variable textoSalvable
-        * que estoy usando en mi programa.
-        * */
-        if(savedInstanceState != null){
-            for(String key: savedInstanceState.keySet()){
+         * - Cuando rotamos la posición del dispositivo de vertical a horizontal y viceversa, savedInstanceState guarda
+         * el bundle con los valores del último activity. Algunos de estos valores por defect son
+         *  viewHierarchyState, lifecycle, lastAutofillId, etc.
+         *
+         * Además, guarda algunos valores que se están mostrando por pantalla, como por ejemplo los EditText
+         * */
+        if (savedInstanceState != null) {
+            for (String key : savedInstanceState.keySet()) {
                 Log.d("Contenido bundle", "Key -> " + key + "; Value -> " + savedInstanceState.get(key).toString());
             }
+            /*El contenido de textoTextViewVolatil se pierde, ya que es un textView. Otros tipos de view como pueden ser un EditText
+            * no pierden su contenido y se asigna automáticamente. Por ejemplo, si tenemos un EditText  que en el momento antes
+             * de voltear la pantalla tiene "7", al voltearla volverá a mostrar "7"*/
 
-            /*Aquí está el contenido del bundle en vertical*/
-            //Contenido bundle Key -> android:state; Value -> 2
-            //Contenido bundle Key -> android:viewHierarchyState; Value -> Bundle[{android:views={16908290=android.view.AbsSavedState$1@2cb530d, 2131230774=android.view.View$BaseSavedState@6b457d3, 2131230785=android.view.View$BaseSavedState@dbddf10, 2131231175=TextView.SavedState{a2f0a09 start=0 end=0 text=vista vertical y tambien horizontal}}, android:focusedViewId=2131231175}]
-            //Contenido bundle Key -> @android:autofillResetNeeded; Value -> true
-            //Contenido bundle Key -> androidx.lifecycle.BundlableSavedStateRegistry.key; Value -> Bundle[{androidx.lifecycle.internal.SavedStateHandlesProvider=Bundle[{}]}]
-            //Contenido bundle Key -> android:lastAutofillId; Value -> 1073741826
-            //Contenido bundle Key -> android:fragments; Value -> android.app.FragmentManagerState@70c340e
+            /*Al voltear, perdemos el contenido de textoTextFieldVolatil, ya que es un TextView, sin embargo, el contenido
+            * de textoEditTextNoVolatil no se pierde (se almacena a través del bundle savedInstaceState en  2131231217=TextView.SavedState{e76dd3c start=0 end=0 text=10} y
+            * se restaura automáticamente) ya que es un EditText */
 
-            /*y como el bundle android:viewHierarchyState conserva el mismo valor al cambiar a horizontal*/
-            //Contenido bundle Key -> android:state; Value -> 2
-            //Contenido bundle Key -> android:viewHierarchyState; Value -> Bundle[{android:views={16908290=android.view.AbsSavedState$1@2cb530d, 2131230774=android.view.View$BaseSavedState@7711bd0, 2131230785=android.view.View$BaseSavedState@48267c9, 2131231175=TextView.SavedState{59b9ece start=0 end=0 text=vista vertical y tambien horizontal}}, android:focusedViewId=2131231175}]
-            //Contenido bundle Key -> @android:autofillResetNeeded; Value -> true
-            //Contenido bundle Key -> androidx.lifecycle.BundlableSavedStateRegistry.key; Value -> Bundle[{androidx.lifecycle.internal.SavedStateHandlesProvider=Bundle[{}]}]
-            //Contenido bundle Key -> android:lastAutofillId; Value -> 1073741826
-            //Contenido bundle Key -> android:fragments; Value -> android.app.FragmentManagerState@ef991ef
+            /*
+            * Entonces, hemos perdido tanto contador como el contenido del EditText, pero se puede recuperar de la
+            * siguiente manera:
+            * */
+
         }
+
+
 
 
 
